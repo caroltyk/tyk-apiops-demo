@@ -1,9 +1,12 @@
 {{- $files := .Files }}
+{{ $serviceName := ( include "myapi.fullname" . )}}
+{{ $namespace := .Release.Namespace }}
+{{ $port := .Values.service.port | toString }}
 {{- range $path, $file := $files.Glob "apidefinitions/*.json" }}
   {{ $basename := base $path }}
   {{ $configMapKey := $basename | trimSuffix ".json" }}
   {{ $content := $file | toString | nindent 4 }}
-  {{ $listenPath := include "getServiceUrl" (dict "serviceName" (include ".myapi.fullname" .) "namespace" "idk" "port" (include ".Values.service.port" .)) }}
+  {{ $listenPath := include "getServiceUrl" (dict "serviceName" $serviceName "namespace" $namespace "port" $port) }}
   {{ $transformedContent := include "replaceApiListenPath" (dict "apidef" $content "listenPath" $listenPath)}}
   {{ $tykapiname := printf "tykapi-%s" $configMapKey }}
 apiVersion: v1
