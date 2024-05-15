@@ -1,3 +1,10 @@
+{{- define "replaceApiTargetUrl" -}}
+{{- $apidef := .apidef -}}
+{{- $targetUrl := .targetUrl -}}
+{{- $result := regexReplaceAll "<<AUTO REPLACE TARGETURL>>" $apidef $targetUrl -}}
+{{- printf "%s" $result -}}
+{{- end -}}
+
 {{- define "replaceApiListenPath" -}}
 {{- $apidef := .apidef -}}
 {{- $listenPath := .listenPath -}}
