@@ -1,0 +1,55 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "version": "1.0.0",
+    "title": "<<REPLACE API NAME>>"
+  },
+  "security": [
+    {
+      "authToken": []
+    }
+  ],
+  "paths": {},
+  "components": {
+    "securitySchemes": {
+      "authToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization"
+      }
+    }
+  },
+  "x-tyk-api-gateway": {
+    "info": {
+      "name": "<<REPLACE API NAME>>",
+      "state": {
+        "active": true,
+        "internal": false
+      }
+    },
+    "server": {
+      "authentication": {
+        "enabled": true,
+        "securitySchemes": {
+          "authToken": {
+            "enabled": true,
+            "enableClientCertificate": false
+          }
+        }
+      },
+      "gatewayTags": {
+        "enabled": true,
+        "tags": [
+          "partners"
+        ]
+      },
+      "detailedActivityLogs": {
+        "enabled": true
+      },
+      "listenPath": {
+        "value": "<<AUTO REPLACE LISTENPATH>>",
+        "strip": false
+      }
+    }
+  }
+}
