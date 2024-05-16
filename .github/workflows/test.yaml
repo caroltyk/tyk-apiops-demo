@@ -50,8 +50,6 @@ jobs:
 
                 cat res.json | jq 'del(."x-tyk-api-gateway".info.dbId, ."x-tyk-api-gateway".info.id, ."x-tyk-api-gateway".info.orgId)' | jq '."x-tyk-api-gateway".server.listenPath.value="<<AUTO REPLACE LISTENPATH>>"' | jq '."x-tyk-api-gateway".upstream.url="<<AUTO REPLACE TARGETURL>>"' > ${{ inputs.apiName }}.json
 
-                jq 'del(.x-tyk-api-gateway.info.dbId, .x-tyk-api-gateway.info.id, .x-tyk-api-gateway.info.orgId) | .x-tyk-api-gateway.server.listenPath.value = "AUTO REPLACE LISTENPATH" | .x-tyk-api-gateway.upstream.url = "AUTO REPLACE TARGETURL"' input.json
-
                 echo "# "
                 echo "# Remove Temporary API $api_id ..."
                 echo "# "
