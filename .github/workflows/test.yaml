@@ -20,6 +20,8 @@ on:
 jobs:
     create-or-update-api:
         runs-on: ubuntu-latest
+        permissions:
+          contents: write
         steps:
         - 
             name: Checkout repository
