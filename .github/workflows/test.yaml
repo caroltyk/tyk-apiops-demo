@@ -3,24 +3,18 @@ name: Release Workflow
 on:
     workflow_dispatch:
         inputs:
-            logLevel:
-              description: 'Log level'
+            apiName:
+              description: 'Select API'
               required: true
-              default: 'warning'
+              default: '*'
               type: choice
               options:
-              - info
-              - warning
-              - debug
-            tags:
-              description: 'Test scenario tags'
-              required: false
-              type: boolean
-            environment:
-              description: 'Environment to run tests against'
-              type: environment
+              - '*'
+              - fastapi-httpbin
+            tag:
+              description: 'Version Tag'
               required: true
-    
+              type: string
     repository_dispatch:
         types: [trigger]
 
@@ -28,18 +22,54 @@ jobs:
     log-the-inputs:
         runs-on: ubuntu-latest
         steps:
-          - run: |
-              echo "Log level: $LEVEL"
-              echo "Tags: $TAGS"
-              echo "Environment: $ENVIRONMENT"
+          - 
             env:
-              LEVEL: ${{ inputs.logLevel }}
-              TAGS: ${{ inputs.tags }}
-              ENVIRONMENT: ${{ inputs.environment }}
+              APINAME: ${{ inputs.apiName }}
+              TAG: ${{ inputs.tag }}
+            run: |
+              echo "API Name: $APINAME"
+              echo "Tag: $TAG"
+
     build:
         runs-on: ubuntu-latest
         steps:
+        - 
+            name: Setup Host Environment
+            run: |
+                sudo echo "${{ secrets.TYK_DASHBOARD_URL }} tyk-dashboard.org" | sudo tee -a /etc/hosts 
+        -
+            name: Setup ORAS
+            uses: oras-project/setup-oras@v1
+        -
+            name: Download OpenAPI documenet
+            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ env.DOCKER_METADATA_OUTPUT_VERSION }} openapi_schema.json:application/json
         -
             name: Convert to Tyk OAS API Definition
             run: |
-                echo "hello"
+                #!/bin/bash
+                body=$(<openapi_schema.json)
+                wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                api_id=$(cat res.json | jq -r '.ID')
+
+                echo "# "
+                echo "# Temporary API ID $api_id ..."
+                echo "# "
+
+                echo "# "
+                echo "# Retrieve API Definition JSON..."
+                echo "# "
+                wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
+
+                cat res.json | jq '.' > ${{ env.APINAME }}.json
+
+                echo "# "
+                echo "# Remove Temporary API $api_id ..."
+                echo "# "
+                wget --method=DELETE http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' -O res.json
+
+                rm res.json
+
+                echo "# "
+                echo "# Generated API Definition ... ${{ env.APINAME }}.json "
+                echo "# "
+                cat ${{ env.APINAME }}.json
