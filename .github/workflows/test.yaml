@@ -56,7 +56,7 @@ jobs:
             run: |
                 oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
-                
+
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
@@ -86,7 +86,17 @@ jobs:
 
                 rm res.json
 
+                mv .${{ inputs.apiName }}.json ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+
                 echo "# "
-                echo "# Generated API Definition ... ${{ inputs.apiName }}.json "
+                echo "# Generated API Definition ... ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json "
                 echo "# "
-                cat ${{ inputs.apiName }}.json
+                cat ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+        -
+            name: Commit API Definition file
+            run: |
+                git config --global user.name 'github action'
+                git config --global user.email 'github_action@tyk.com'
+                git add ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+                git commit -m "Update API Definition by release action"
+                git push
