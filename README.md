@@ -1,28 +1,47 @@
-# tyk-apiops-demo
+# Tyk APIOps demo
 
-## Helm Chart for Deploying API and Publishing API Definition as Tyk OAS API CRDs
+## oas-httpbin
 
-This Helm chart provides an example setup for deploying an API and publishing API Definitions as Tyk OpenAPI Specification (OAS) API Custom Resource Definitions (CRDs). It's designed to streamline the deployment process and simplify the configuration of your service.
+This repository contains a Helm chart for deploying a Tyk OAS (OpenAPI Specification) API using the Tyk Operator. The chart generates Tyk Operator CRDs (Custom Resource Definitions) from OpenAPI documents retrieved from Docker Hub.
 
-### Prerequisites
-- Kubernetes cluster
-- Helm installed (version 3 or later)
+### Features
+- Helm Chart for Tyk OAS API Deployment: Generate and deploy Tyk Operator CRDs.
+- Automated Deployment Workflow: Retrieve OpenAPI documents based on version tags and generate Tyk OAS API Definitions.
 
-### Installation
-1. Copy this chart to your deployment repository.
-2. Modify `values.yaml` to configure your service:
+### Using the Deploy Workflow
+1. From the Actions menu, choose "Deploy workflow" and then "Run workflow".
+2. Select API to deploy - `oas-httpbin`.
+3. Enter the version tag to be deployed. The workflow assumes the following resources are available in DockerHub at `https://hub.docker.com/repositories/${{ secrets.DOCKERHUB_USERNAME }}`:
+    - OpenAPI document named `openapi_schema.json` with tag `openapi_schema-${{ inputs.tag }}`
+    - Docker image with tag `${{ inputs.tag }}`
+4. When the workflow completes successfully, the Helm Chart will be updated in two places:
+    - `image.tag` in `values.yaml` is updated to ${{ inputs.tag }}.
+    - An updated API Definition is generated and commited to `/apidefinitions`.
+
+### Installing the Application Using Helm
+To install the application using Helm:
+```
+helm install <release_name> <path_to_chart>
+```
+Replace <release_name> with your desired release name and <path_to_chart> with the path to the Helm chart directory.
+
+### Updating Values
+#### Update `values.yaml` to configure your service
 ```yaml
 image:
   repository: nginx
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "" # Overrides the image tag whose default is the chart appVersion.
 ```
-3. Add Tyk OAS API Definition json files under `/apidefinitions` directory
-4. Install the Helm Chart:
+#### Update Tyk API configurations
 ```
-helm install <release_name> <path_to_chart>
+tykapi:
+  listenPath: /oas-httpbin
 ```
+#### Add Tyk OAS API Definition JSON Files
+Place Tyk OAS API Definition JSON files under the /apidefinitions directory. The following fields in the API Definitions can be auto-populated by the Helm Chart:
+- Listen Path: If set as "<<AUTO REPLACE LISTENPATH>>" in the API definition file, the Helm Chart will replace it with the `tykapi.listenPath` field from the values file.
+- Target URL: If set as "<<AUTO REPLACE TARGETURL>>" in the API definition file, the Helm Chart will replace it with the Kubernetes service URL.
 
 ### Usage
 After installation, your API service and corresponding API Definitions will be deployed according to the configurations you've specified. You can manage and interact with your APIs using the Tyk Dashboard or API.
