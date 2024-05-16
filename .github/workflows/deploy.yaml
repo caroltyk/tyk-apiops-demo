@@ -1,4 +1,4 @@
-name: Release Workflow
+name: Deploy workflow
 
 on:
     workflow_dispatch:
@@ -6,10 +6,10 @@ on:
             apiName:
               description: 'Select API'
               required: true
-              default: 'fastapi-httpbin'
+              default: 'oas-httpbin'
               type: choice
               options:
-              - fastapi-httpbin
+              - oas-httpbin
             tag:
               description: 'Version Tag'
               required: true
@@ -71,11 +71,8 @@ jobs:
 
                 api_id=$(cat res.json | jq -r '.ID')
 
-                echo "# Temporary API ID $api_id ..."
                 echo "# "
-
-                echo "# "
-                echo "# Retrieve API Definition JSON..."
+                echo "# Retrieve API Definition $api_id..."
                 echo "# "
                 wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
 

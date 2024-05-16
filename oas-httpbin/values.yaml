@@ -5,16 +5,21 @@
 replicaCount: 1
 
 image:
-  repository: "caroltyk/fastapi-httpbin"
+  repository: "caroltyk/oas-httpbin"
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: "main"
 
 tykapi:
-  listenPath: /fastapi-httpbin
+  listenPath: /oas-httpbin
+  # customDomain: ""
+  validateRequest: false
+  mockResponse: false
+  allowList: false
+  authentication: false
 
 imagePullSecrets: []
-nameOverride: "fastapi-httpbin"
+nameOverride: "oas-httpbin"
 fullnameOverride: ""
 
 serviceAccount:
