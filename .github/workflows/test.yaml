@@ -37,15 +37,15 @@ jobs:
             run: |
                 oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
-                echo "::set-output name=body::$body"
+                echo "body=$body" >> $GITHUB_OUTPUT
         - 
             name: Check if file exists
             id: check-file
             run: |
                 if [ -f "./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json" ]; then
-                    echo "::set-output name=fileExists::true"
+                    echo "fileExists=true" >> $GITHUB_OUTPUT
                 else
-                    echo "::set-output name=fileExists::false"
+                    echo "fileExists=false" >> $GITHUB_OUTPUT
                 fi
         -
             name: Read file and extract ID
@@ -54,18 +54,21 @@ jobs:
             run: |
                 json=$(<./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json)
                 id=$(jq -r '."x-tyk-api-gateway".info.id' <<< "$json")
-                echo "::set-output name=id::$id"
+                echo "id=$id" >> $GITHUB_OUTPUT
         -
             name: Patch or Import API
+            env:
+                body: ${{ steps.download-openapi.outputs.body }}
+                id: ${{ steps.read-file.outputs.id }}
             run: |
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
-                    echo "# Patched API ${{ steps.read-file.outputs.id }} ..."
-                    wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/${{ steps.read-file.outputs.id }} --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="${{ steps.download-openapi.outputs.body }}" -O res.json
+                    echo "# Patched API $id ..."
+                    wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/$id --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                 else
                     # If the file does not exist, Import API
                     echo "# Import API  ..."
-                    wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="${{ steps.download-openapi.outputs.body }}" -O res.json
+                    wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                 fi
 
                 api_id=$(cat res.json | jq -r '.ID')
