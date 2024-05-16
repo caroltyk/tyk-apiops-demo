@@ -16,5 +16,5 @@
 {{- $serviceName := .serviceName -}}
 {{- $namespace := .namespace -}}
 {{- $port := .port -}}
-{{- printf "%s.%s.svc.cluster.local:%s" $serviceName $namespace $port -}}
+{{- printf "http://%s.%s.svc.cluster.local:%s" $serviceName $namespace $port -}}
 {{- end -}}

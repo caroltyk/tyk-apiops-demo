@@ -11,10 +11,10 @@ image:
   tag: "main"
 
 tykapi:
-  listenPath: /httpbin
+  listenPath: /fastapi-httpbin
 
 imagePullSecrets: []
-nameOverride: ""
+nameOverride: "fastapi-httpbin"
 fullnameOverride: ""
 
 serviceAccount:
