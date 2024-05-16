@@ -1,0 +1,27 @@
+#!/bin/bash
+            body=$(<openapi.json)
+            wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+            api_id=$(cat res.json | jq -r '.ID')
+
+            echo "# "
+            echo "# Temporary API ID $api_id ..."
+            echo "# "
+
+            echo "# "
+            echo "# Retrieve API Definition JSON..."
+            echo "# "
+            wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
+
+            cat res.json | jq '.' > tyk_apidefinition.json
+
+            echo "# "
+            echo "# Remove Temporary API $api_id ..."
+            echo "# "
+            wget --method=DELETE http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' -O res.json
+
+            rm res.json
+
+            echo "# "
+            echo "# Generated API Definition ..."
+            echo "# "
+            cat tyk_apidefinition.json

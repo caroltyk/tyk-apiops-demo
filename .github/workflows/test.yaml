@@ -1,0 +1,15 @@
+name: Triggered Workflow
+
+on:
+  repository_dispatch:
+    types: [trigger]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+    
+        steps:
+        -
+            name: Convert to Tyk OAS API Definition
+            run: |
+                echo "hello"
