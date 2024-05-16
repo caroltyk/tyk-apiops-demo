@@ -42,7 +42,7 @@ jobs:
             uses: oras-project/setup-oras@v1
         -
             name: Download OpenAPI documenet
-            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ env.DOCKER_METADATA_OUTPUT_VERSION }} openapi_schema.json:application/json
+            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ env.TAG }} openapi_schema.json:application/json
         -
             name: Convert to Tyk OAS API Definition
             run: |
