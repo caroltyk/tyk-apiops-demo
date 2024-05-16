@@ -56,7 +56,7 @@ jobs:
                 body: ${{ steps.download-openapi.outputs.body }}
                 id: ${{ steps.read-file.outputs.id }}
             run: |
-                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
+                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.apiName }}:openapi_schema-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
 
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
