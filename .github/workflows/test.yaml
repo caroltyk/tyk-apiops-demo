@@ -18,17 +18,6 @@ on:
         types: [trigger]
 
 jobs:
-    log-the-inputs:
-        runs-on: ubuntu-latest
-        steps:
-          - 
-            env:
-              APINAME: ${{ inputs.apiName }}
-              TAG: ${{ inputs.tag }}
-            run: |
-              echo "API Name: $APINAME"
-              echo "Tag: $TAG"
-
     build:
         runs-on: ubuntu-latest
         steps:
@@ -59,7 +48,9 @@ jobs:
                 echo "# "
                 wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
 
-                cat res.json | jq '.' > ${{ inputs.apiName }}.json
+                cat res.json | jq 'del(."x-tyk-api-gateway".info.dbId, ."x-tyk-api-gateway".info.id, ."x-tyk-api-gateway".info.orgId)' | jq '."x-tyk-api-gateway".server.listenPath.value="<<AUTO REPLACE LISTENPATH>>"' | jq '."x-tyk-api-gateway".upstream.url="<<AUTO REPLACE TARGETURL>>"' > ${{ inputs.apiName }}.json
+
+                jq 'del(.x-tyk-api-gateway.info.dbId, .x-tyk-api-gateway.info.id, .x-tyk-api-gateway.info.orgId) | .x-tyk-api-gateway.server.listenPath.value = "AUTO REPLACE LISTENPATH" | .x-tyk-api-gateway.upstream.url = "AUTO REPLACE TARGETURL"' input.json
 
                 echo "# "
                 echo "# Remove Temporary API $api_id ..."
