@@ -37,7 +37,11 @@ jobs:
             run: |
                 oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
-                echo "body=$body" >> $GITHUB_OUTPUT
+                {
+                    echo 'JSON_RESPONSE<<EOF'
+                    $body
+                    echo EOF
+                } >> "$GITHUB_OUTPUT"
         - 
             name: Check if file exists
             id: check-file
