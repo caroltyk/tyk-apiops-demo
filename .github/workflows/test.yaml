@@ -6,10 +6,9 @@ on:
             apiName:
               description: 'Select API'
               required: true
-              default: '*'
+              default: 'fastapi-httpbin'
               type: choice
               options:
-              - '*'
               - fastapi-httpbin
             tag:
               description: 'Version Tag'
@@ -42,7 +41,7 @@ jobs:
             uses: oras-project/setup-oras@v1
         -
             name: Download OpenAPI documenet
-            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ env.TAG }} openapi_schema.json:application/json
+            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
         -
             name: Convert to Tyk OAS API Definition
             run: |
@@ -60,7 +59,7 @@ jobs:
                 echo "# "
                 wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
 
-                cat res.json | jq '.' > ${{ env.APINAME }}.json
+                cat res.json | jq '.' > ${{ inputs.apiName }}.json
 
                 echo "# "
                 echo "# Remove Temporary API $api_id ..."
