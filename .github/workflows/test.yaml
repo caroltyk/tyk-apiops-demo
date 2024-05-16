@@ -18,9 +18,12 @@ on:
         types: [trigger]
 
 jobs:
-    build:
+    determine-create-or-update:
         runs-on: ubuntu-latest
         steps:
+        - 
+            name: Checkout repository
+            uses: actions/checkout@v2
         - 
             name: Setup Host Environment
             run: |
@@ -30,16 +33,43 @@ jobs:
             uses: oras-project/setup-oras@v1
         -
             name: Download OpenAPI documenet
-            run: oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
-        -
-            name: Convert to Tyk OAS API Definition
+            id: download-openapi
             run: |
-                #!/bin/bash
+                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
-                wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                echo "::set-output name=body::$body"
+        - 
+            name: Check if file exists
+            id: check-file
+            run: |
+                if [ -f "./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json" ]; then
+                    echo "::set-output name=fileExists::true"
+                else
+                    echo "::set-output name=fileExists::false"
+                fi
+        -
+            name: Read file and extract ID
+            if: steps.check-file.outputs.fileExists == 'true'
+            id: read-file
+            run: |
+                json=$(<./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json)
+                id=$(jq -r '."x-tyk-api-gateway".info.id' <<< "$json")
+                echo "::set-output name=id::$id"
+        -
+            name: Patch or Import API
+            run: |
+                if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
+                    # If the file exists, Patch API
+                    echo "# Patched API ${{ steps.read-file.outputs.id }} ..."
+                    wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/${{ steps.read-file.outputs.id }} --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="${{ steps.download-openapi.outputs.body }}" -O res.json
+                else
+                    # If the file does not exist, Import API
+                    echo "# Import API  ..."
+                    wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="${{ steps.download-openapi.outputs.body }}" -O res.json
+                fi
+
                 api_id=$(cat res.json | jq -r '.ID')
 
-                echo "# "
                 echo "# Temporary API ID $api_id ..."
                 echo "# "
 
@@ -48,12 +78,12 @@ jobs:
                 echo "# "
                 wget --method=GET http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' --header 'Content-Type: text/plain' -O res.json
 
-                cat res.json | jq 'del(."x-tyk-api-gateway".info.dbId, ."x-tyk-api-gateway".info.id, ."x-tyk-api-gateway".info.orgId)' | jq '."x-tyk-api-gateway".server.listenPath.value="<<AUTO REPLACE LISTENPATH>>"' | jq '."x-tyk-api-gateway".upstream.url="<<AUTO REPLACE TARGETURL>>"' > ${{ inputs.apiName }}.json
+                cat res.json | jq '."x-tyk-api-gateway".server.listenPath.value="<<AUTO REPLACE LISTENPATH>>"' | jq '."x-tyk-api-gateway".upstream.url="<<AUTO REPLACE TARGETURL>>"' > ${{ inputs.apiName }}.json
 
-                echo "# "
-                echo "# Remove Temporary API $api_id ..."
-                echo "# "
-                wget --method=DELETE http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' -O res.json
+                # echo "# "
+                # echo "# Remove Temporary API $api_id ..."
+                # echo "# "
+                # wget --method=DELETE http://tyk-dashboard.org/api/apis/oas/$api_id --header 'Authorization: ${{ secrets.TYK_APIKEY }}' -O res.json
 
                 rm res.json
 
