@@ -69,6 +69,6 @@ jobs:
                 rm res.json
 
                 echo "# "
-                echo "# Generated API Definition ... ${{ env.APINAME }}.json "
+                echo "# Generated API Definition ... ${{ inputs.apiName }}.json "
                 echo "# "
-                cat ${{ env.APINAME }}.json
+                cat ${{ inputs.apiName }}.json
