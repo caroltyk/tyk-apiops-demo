@@ -94,11 +94,17 @@ jobs:
                 echo "# Generated API Definition ... ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json "
                 echo "# "
                 cat ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+        - 
+            name: Update values.yaml
+            run: |
+                new_tag="${{ inputs.tag }}"  # Set your new tag value here
+                sed -i "s/\(image.tag: \).*/\1$new_tag/" ./${{ inputs.apiName }}/values.yaml
         -
-            name: Commit API Definition file
+            name: Commit API Definition file and values.yaml
             run: |
                 git config --global user.name 'github action'
                 git config --global user.email 'github_action@tyk.com'
                 git add ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+                git add ./${{ inputs.apiName }}/values.yaml
                 git commit -m "Update API Definition by release action"
                 git push
