@@ -31,17 +31,6 @@ jobs:
         -
             name: Setup ORAS
             uses: oras-project/setup-oras@v1
-        -
-            name: Download OpenAPI documenet
-            id: download-openapi
-            run: |
-                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
-                body=$(<openapi_schema.json)
-                {
-                    echo 'JSON_RESPONSE<<EOF'
-                    $body
-                    echo EOF
-                } >> "$GITHUB_OUTPUT"
         - 
             name: Check if file exists
             id: check-file
@@ -65,6 +54,9 @@ jobs:
                 body: ${{ steps.download-openapi.outputs.body }}
                 id: ${{ steps.read-file.outputs.id }}
             run: |
+                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/apis:fastapi-httpbin-${{ inputs.tag }}
+                body=$(<openapi_schema.json)
+                
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
