@@ -62,16 +62,16 @@ jobs:
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
-                    #request="http://tyk-dashboard.org/api/apis/oas/${id}?validateRequest=true"
-                    #echo $request
-                    #wget --method=PATCH $request --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
-                    wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/$id --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    request="http://tyk-dashboard.org/api/apis/oas/${id}?validateRequest=true"
+                    echo $request
+                    wget --method=PATCH $request --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    #wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/$id --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$id
                 else
                     # If the file does not exist, Import API
                     echo "# Import API  ..."
-                    #wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import?validateRequest=true' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
-                    wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import?validateRequest=true' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    #wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$(cat res.json | jq -r '.ID')
                 fi
 
