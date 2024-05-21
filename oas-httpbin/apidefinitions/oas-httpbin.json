@@ -53,16 +53,6 @@
         "active": true
       }
     },
-    "middleware": {
-      "operations": {
-        "get_status__codes__get": {
-          "validateRequest": {
-            "enabled": true,
-            "errorResponseCode": 422
-          }
-        }
-      }
-    },
     "server": {
       "detailedTracing": {
         "enabled": true
