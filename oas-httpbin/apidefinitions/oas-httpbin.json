@@ -31,7 +31,7 @@
   },
   "servers": [
     {
-      "url": "http://tyk-gw.local/"
+      "url": "http://tyk-gw.local/oas-httpbin"
     },
     {
       "url": "http://0.0.0.0:8000"
