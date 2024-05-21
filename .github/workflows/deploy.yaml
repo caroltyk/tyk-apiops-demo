@@ -62,7 +62,9 @@ jobs:
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
-                    wget --method=PATCH 'http://tyk-dashboard.org/api/apis/oas/$id?validateRequest=true' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    request="http://tyk-dashboard.org/api/apis/oas/${id}?validateRequest=true"
+                    echo $request
+                    wget --method=PATCH $request --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$id
                 else
                     # If the file does not exist, Import API
