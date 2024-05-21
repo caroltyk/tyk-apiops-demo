@@ -63,13 +63,15 @@ jobs:
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
                     wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/$id --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+
+                    api_id=$id
                 else
                     # If the file does not exist, Import API
                     echo "# Import API  ..."
                     wget --method=POST http://tyk-dashboard.org/api/apis/oas/import --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
-                fi
 
-                api_id=$(cat res.json | jq -r '.ID')
+                    api_id=$(cat res.json | jq -r '.ID')
+                fi
 
                 echo "# "
                 echo "# Retrieve API Definition $api_id..."
