@@ -97,7 +97,9 @@ jobs:
             name: Update values.yaml
             run: |
                 new_tag="${{ inputs.tag }}"  # Set your new tag value here
-                sed -i "s/\(image.tag: \).*/\1$new_tag/" ./${{ inputs.apiName }}/values.yaml
+                sed "s/\(tag: \).*/\1$new_tag/" ./${{ inputs.apiName }}/values.yaml > ./tmp.yaml
+                cp ./tmp.yaml ./${{ inputs.apiName }}/values.yaml
+                rm ./tmp.yaml
         -
             name: Commit API Definition file and values.yaml
             run: |
