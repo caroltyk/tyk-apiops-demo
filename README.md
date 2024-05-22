@@ -1,5 +1,7 @@
 # Tyk APIOps demo
 
+*Make API management as an integral part of development lifecycle*
+
 ## oas-httpbin
 
 This repository contains a Helm chart for deploying a Tyk OAS (OpenAPI Specification) API using the Tyk Operator. The chart generates Tyk Operator CRDs (Custom Resource Definitions) from OpenAPI documents retrieved from Docker Hub.
