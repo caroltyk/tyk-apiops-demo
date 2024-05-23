@@ -17,10 +17,10 @@ on:
             environment:
               description: 'Environment'
               required: true
-              default: 'staging'
+              default: 'tyk-cp'
               type: choice
               options:
-              - staging
+              - tyk-cp
               - jupiter-staging
               - jupiter-production
     repository_dispatch:
