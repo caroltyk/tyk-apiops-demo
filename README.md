@@ -7,8 +7,10 @@
 This repository contains a Helm chart for deploying a Tyk OAS (OpenAPI Specification) API using the Tyk Operator. The chart generates Tyk Operator CRDs (Custom Resource Definitions) from OpenAPI documents retrieved from Docker Hub.
 
 ### Features
+- Update Tyk API document : Retrieve OpenAPI documents based on version tags and generate Tyk OAS API Definitions with following settings:
+  - Apply "My Base API" template. The Base API template have detailed tracing, detailed activity log, and auth token enabled.
+  - Auto generate middlewares for validate request
 - Helm Chart for Tyk OAS API Deployment: Generate and deploy Tyk Operator CRDs.
-- Automated Deployment Workflow: Retrieve OpenAPI documents based on version tags and generate Tyk OAS API Definitions.
 
 ### Using the Deploy Workflow
 1. From the Actions menu, choose "Deploy workflow" and then "Run workflow".
