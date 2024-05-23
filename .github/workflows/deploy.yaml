@@ -31,7 +31,7 @@ jobs:
             name: Setup Host Environment
             id: dashboard
             env:
-                dashboardUrl: ${{ secrets.TYK_DASHBOARD_URL }}
+                dashboardUrl: ${{ vars.TYK_DASHBOARD_URL }}
                 dashboardHost: ${{ secrets.TYK_DASHBOARD_HOST }}
             run: |
                 if [ -n "$dashboardHost" ]; then
