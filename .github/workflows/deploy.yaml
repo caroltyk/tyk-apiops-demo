@@ -14,22 +14,13 @@ on:
               description: 'Version Tag'
               required: true
               type: string
-            environment:
-              description: 'Environment'
-              required: true
-              default: 'tyk-cp'
-              type: choice
-              options:
-              - tyk-cp
-              - jupiter-staging
-              - jupiter-production
     repository_dispatch:
         types: [trigger]
 
 jobs:
     create-or-update-api:
         runs-on: ubuntu-latest
-        environment: ${{ inputs.environment }}
+        environment: ${{ env.GITHUB_REF_NAME }}
         permissions:
           contents: write
         steps:
