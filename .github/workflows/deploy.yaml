@@ -87,7 +87,7 @@ jobs:
 
                 rm res.json
 
-                mv ./${{ inputs.apiName }}.json ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
+                mv ${{ inputs.apiName }}.json ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json
 
                 echo "# "
                 echo "# Generated API Definition ... ./${{ inputs.apiName }}/apidefinitions/${{ inputs.apiName }}.json "
