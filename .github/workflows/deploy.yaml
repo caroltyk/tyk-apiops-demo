@@ -20,6 +20,7 @@ on:
 jobs:
     create-or-update-api:
         runs-on: ubuntu-latest
+        environment: staging
         permissions:
           contents: write
         steps:
@@ -53,7 +54,6 @@ jobs:
         -
             name: Patch or Import API
             env:
-                body: ${{ steps.download-openapi.outputs.body }}
                 id: ${{ steps.read-file.outputs.id }}
             run: |
                 oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.apiName }}:openapi_schema-${{ inputs.tag }}
@@ -62,16 +62,14 @@ jobs:
                 if [ "${{ steps.check-file.outputs.fileExists }}" == 'true' ]; then
                     # If the file exists, Patch API
                     echo "# Patched API $id ..."
-                    request="http://tyk-dashboard.org/api/apis/oas/${id}?validateRequest=true"
+                    request="http://tyk-dashboard.org/api/apis/oas/${id}?validateRequest=true&templateID=${{ secrets.API_TEMPLATE_ID }}"
                     echo $request
                     wget --method=PATCH $request --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
-                    #wget --method=PATCH http://tyk-dashboard.org/api/apis/oas/$id --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$id
                 else
                     # If the file does not exist, Import API
                     echo "# Import API  ..."
-                    wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import?validateRequest=true' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
-                    #wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    wget --method=POST 'http://tyk-dashboard.org/api/apis/oas/import?validateRequest=true&templateID=${{ secrets.API_TEMPLATE_ID }}' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$(cat res.json | jq -r '.ID')
                 fi
 
