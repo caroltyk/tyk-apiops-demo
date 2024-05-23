@@ -14,13 +14,22 @@ on:
               description: 'Version Tag'
               required: true
               type: string
+            environment:
+              description: 'Environment'
+              required: true
+              default: 'staging'
+              type: choice
+              options:
+              - staging
+              - jupiter-staging
+              - jupiter-production
     repository_dispatch:
         types: [trigger]
 
 jobs:
     create-or-update-api:
         runs-on: ubuntu-latest
-        environment: staging
+        environment: ${{ inputs.environment }}
         permissions:
           contents: write
         steps:
