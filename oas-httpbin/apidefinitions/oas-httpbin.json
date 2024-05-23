@@ -47,13 +47,6 @@
         "title": "ValidationError",
         "type": "object"
       }
-    },
-    "securitySchemes": {
-      "authToken": {
-        "in": "header",
-        "name": "Authorization",
-        "type": "apiKey"
-      }
     }
   },
   "info": {
@@ -129,11 +122,6 @@
       }
     }
   },
-  "security": [
-    {
-      "authToken": []
-    }
-  ],
   "servers": [
     {
       "url": "http://tyk-gw.local/"
