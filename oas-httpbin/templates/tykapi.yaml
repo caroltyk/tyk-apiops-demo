@@ -25,6 +25,13 @@ kind: TykOasApiDefinition
 metadata:
   name: {{ $tykapiname }}
 spec:
+  {{- if $.Values.tykapi.operatorContext }}
+  contextRef:
+    name: {{ $.Values.tykapi.operatorContext.name }}
+    {{- if $.Values.tykapi.operatorContext.namespace }}
+    namespace: {{ $.Values.tykapi.operatorContext.namespace }}
+    {{- end }}  
+  {{- end }}
   tykOAS:
     configmapRef:
       name: {{ $tykapiname }}

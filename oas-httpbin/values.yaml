@@ -12,11 +12,9 @@ image:
 
 tykapi:
   listenPath: /oas-httpbin
-  customDomain: ""
-  validateRequest: false
-  mockResponse: false
-  allowList: false
-  authentication: false
+  operatorContext:
+    name: tyk-dp-ctx
+    namespace: tyk-staging-hybrid
 
 imagePullSecrets: []
 nameOverride: "oas-httpbin"
