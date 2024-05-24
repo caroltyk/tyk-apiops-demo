@@ -8,15 +8,13 @@ image:
   repository: "caroltyk/oas-httpbin"
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: v0.1.0
+  tag: latest
 
 tykapi:
   listenPath: /oas-httpbin
-  customDomain: ""
-  validateRequest: false
-  mockResponse: false
-  allowList: false
-  authentication: false
+  # operatorContext:
+  #   name: tyk-cp-ctx
+  #   namespace: tyk-cp
 
 imagePullSecrets: []
 nameOverride: "oas-httpbin"
