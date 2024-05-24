@@ -12,9 +12,9 @@ image:
 
 tykapi:
   listenPath: /oas-httpbin
-  operatorContext:
-    name: tyk-operator-ctx
-    namespace: tyk-hybrid-stg
+  # operatorContext:
+  #   name: tyk-cp-ctx
+  #   namespace: tyk-cp
 
 imagePullSecrets: []
 nameOverride: "oas-httpbin"
