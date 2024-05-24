@@ -7,20 +7,35 @@
 This repository contains a Helm chart for deploying a Tyk OAS (OpenAPI Specification) API using the Tyk Operator. The chart generates Tyk Operator CRDs (Custom Resource Definitions) from OpenAPI documents retrieved from Docker Hub.
 
 ### Features
-- Update Tyk API document : Retrieve OpenAPI documents based on version tags and generate Tyk OAS API Definitions with following settings:
-  - Apply "My Base API" template. The Base API template have detailed tracing, detailed activity log, and auth token enabled.
-  - Auto generate middlewares for validate request
-- Helm Chart for Tyk OAS API Deployment: Generate and deploy Tyk Operator CRDs.
+1. Update Tyk OAS API Definition:
+  - Retrieve OpenAPI document based on version tags and generate Tyk OAS API Definitions with following settings:
+  - Apply API Template when importing from or patching with the OpenAPI document
+  - Auto generate middlewares for validate request for endpoints defined in the OpenAPI document
+  - The resulting API Definition is saved in Git at `./apidefinitions`.
+
+2. Helm Chart for Tyk OAS API Deployment:
+  - Helm template to generate Tyk Operator CRDs with latest API Definition at `./apidefinitions`.
+  - Customisable API listen path `tykapi.listenPath`
+  - Customisable Operator Context `tykapi.operatorContext`
+
+3. Environment-specific settings are retrieved from GitHub Environment setting:
+  - vars.TYK_DASHBOARD_URL: Base URL of Tyk Dashboard API
+  - secrets.TYK_APIKEY: Access Key to Tyk Dashboard API
+  - secrets.API_TEMPLATE_ID: Base Template used during import or patching
 
 ### Using the Deploy Workflow
 1. From the Actions menu, choose "Deploy workflow" and then "Run workflow".
 2. Select API to deploy - `oas-httpbin`.
-3. Enter the version tag to be deployed. The workflow assumes the following resources are available in DockerHub at `https://hub.docker.com/repositories/${{ secrets.DOCKERHUB_USERNAME }}`:
-    - OpenAPI document named `openapi_schema.json` with tag `openapi_schema-${{ inputs.tag }}`
-    - Docker image with tag `${{ inputs.tag }}`
-4. When the workflow completes successfully, the Helm Chart will be updated in two places:
-    - `image.tag` in `values.yaml` is updated to ${{ inputs.tag }}.
-    - An updated API Definition is generated and commited to `/apidefinitions`.
+3. Enter the version tag to be deployed. Two versions are supported now:
+    - `v0.1.0`: httpbin service with /get endpoint
+    - `v0.2.0`: httpbin service with /get and /status endpoints
+4. Select Environment to deploy to
+   - `tyk-cp` (Using a self-hosted environment)
+   - `jupiter-staging` (Using a staging environment setup in Tyk Cloud: https://rural-gander-adm.aws-euw2.cloud-ara.tyk.io)
+   
+When the workflow completes successfully, the Helm Chart will be updated in two places:
+- `image.tag` in `values.yaml` is updated to ${{ inputs.tag }}.
+- An updated API Definition is generated and commited to `/apidefinitions`.
 
 ### Installing the Application Using Helm
 To install the application using Helm:
