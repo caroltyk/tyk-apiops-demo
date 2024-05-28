@@ -20,8 +20,8 @@ on:
                 default: 'jupiter-staging'
                 type: choice
                 options:
-                - tyk-cp
                 - jupiter-staging
+                - jupiter-production
     repository_dispatch:
         types: [trigger]
 
