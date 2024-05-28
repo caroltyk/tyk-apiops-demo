@@ -13,8 +13,8 @@ image:
 tykapi:
   listenPath: /oas-httpbin
   operatorContext:
-    name: tyk-dp-ctx
-    namespace: tyk-staging-hybrid
+    name: tyk-operator-ctx
+    namespace: tyk-hybrid-stg
 
 imagePullSecrets: []
 nameOverride: "oas-httpbin"
