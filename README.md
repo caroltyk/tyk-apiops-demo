@@ -32,6 +32,7 @@ This repository contains a Helm chart for deploying a Tyk OAS (OpenAPI Specifica
 4. Select Environment to deploy to
    - `tyk-cp` (Using a self-hosted environment)
    - `jupiter-staging` (Using a staging environment setup in Tyk Cloud: https://rural-gander-adm.aws-euw2.cloud-ara.tyk.io)
+   - `jupiter-production` (Using a production environment setup in Tyk Cloud: https://relevant-oven-adm.aws-euw2.cloud-ara.tyk.io)
    
 When the workflow completes successfully, the Helm Chart will be updated in two places:
 - `image.tag` in `values.yaml` is updated to ${{ inputs.tag }}.
