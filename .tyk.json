@@ -2,11 +2,11 @@
     "type": "apidef",
     "files": [
     {
-        "file": "test1.json",
+        "file": "/sync-data/test1.json",
         "oas": {}
     },
     {
-        "file": "test2.json",
+        "file": "/sync-data/test2.json",
         "oas": {}
     }
     ]
