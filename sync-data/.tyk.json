@@ -1,0 +1,13 @@
+{
+    "type": "apidef",
+    "files": [
+    {
+        "file": "test1.json",
+        "oas": {}
+    },
+    {
+        "file": "test2.json",
+        "oas": {}
+    }
+    ]
+}
