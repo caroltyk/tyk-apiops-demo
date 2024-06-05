@@ -26,8 +26,9 @@ on:
         types: [trigger]
 
 jobs:
-    create-or-update-api:
+    deploy-oas-httpbin:
         runs-on: ubuntu-latest
+        if: ${{ inputs.apiName }} == 'oas-httpbin'
         environment: ${{ inputs.env }}
         permissions:
           contents: write
