@@ -18,9 +18,10 @@ on:
         types: [trigger]
 
 jobs:
-    create-or-update-api:
+    deploy-oas-httpbin:
         runs-on: ubuntu-latest
-        environment: ${{ env.GITHUB_REF_NAME }}
+        if: ${{ inputs.apiName }} == 'oas-httpbin'
+        environment: ${{ inputs.env }}
         permissions:
           contents: write
         steps:
