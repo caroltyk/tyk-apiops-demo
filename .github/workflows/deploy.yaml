@@ -14,6 +14,14 @@ on:
               description: 'Version Tag'
               required: true
               type: string
+            env:
+                description: 'Deploy Environment'
+                required: true
+                default: 'jupiter-staging'
+                type: choice
+                options:
+                - jupiter-staging
+                - jupiter-production
     repository_dispatch:
         types: [trigger]
 
