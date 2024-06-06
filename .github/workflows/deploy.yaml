@@ -14,13 +14,6 @@ on:
               description: 'Version Tag'
               required: true
               type: string
-            env:
-                description: 'Deploy Environment'
-                required: true
-                type: choice
-                options:
-                - staging
-                - production
     repository_dispatch:
         types: [trigger]
 
@@ -28,7 +21,7 @@ jobs:
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
-        environment: ${{ inputs.env }}
+        environment: ${{ github.ref_name }}
         permissions:
           contents: write
         steps:
