@@ -73,6 +73,9 @@ jobs:
                 id: ${{ steps.read-file.outputs.id }}
                 dashboardUrl: ${{ steps.dashboard.outputs.dashboardUrl }}
             run: |
+                echo $id
+                echo $dashboardUrl
+
                 oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.apiName }}:openapi_schema-${{ inputs.tag }}
                 body=$(<openapi_schema.json)
 
