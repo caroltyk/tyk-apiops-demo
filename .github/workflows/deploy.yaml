@@ -17,11 +17,11 @@ on:
             env:
                 description: 'Deploy Environment'
                 required: true
-                default: 'jupiter-staging'
+                default: 'production'
                 type: choice
                 options:
-                - jupiter-staging
-                - jupiter-production
+                - staging
+                - production
     repository_dispatch:
         types: [trigger]
 
