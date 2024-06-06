@@ -19,7 +19,7 @@ spec:
   protocol: http
   active: true
   proxy:
-    target_url: {{ $targetUrl }}
+    target_url: {{ $targetUrl }}/graphql
     listen_path: {{ $listenPath }}
     strip_listen_path: true
   graphql:
