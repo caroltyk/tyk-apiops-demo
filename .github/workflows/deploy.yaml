@@ -14,13 +14,6 @@ on:
               description: 'Version Tag'
               required: true
               type: string
-            env:
-                description: 'Deploy Environment'
-                required: true
-                type: choice
-                options:
-                - staging
-                - production
     repository_dispatch:
         types: [trigger]
 
@@ -39,12 +32,14 @@ jobs:
               echo "ENVIRONMENT=development" >> $GITHUB_ENV
             fi
         - name: Display environment
-          run: echo "Environment is $ENVIRONMENT"
+          run: |
+            echo "Environment is $ENVIRONMENT"
+            echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
         needs: set-environment
-        environment: $ENVIRONMENT
+        environment: ${{ steps.determine-env.outputs.environment }}
         permissions:
           contents: write
         steps:
