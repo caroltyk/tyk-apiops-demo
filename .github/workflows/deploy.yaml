@@ -10,6 +10,7 @@ on:
               type: choice
               options:
               - oas-httpbin
+              - simple-graphql
             tag:
               description: 'Version Tag'
               required: true
