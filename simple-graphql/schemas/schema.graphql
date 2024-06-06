@@ -1,0 +1,20 @@
+type Query {
+  viewer: ViewerQuery!
+  user(id: ID!): User!
+}
+
+type ViewerQuery {
+  user: User!
+  role: UserRole!
+}
+
+type User {
+  id: ID!
+  name: String!
+  age: Int!
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
