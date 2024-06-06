@@ -55,33 +55,27 @@
   ],
   "x-tyk-api-gateway": {
     "info": {
-      "dbId": "6661743ab5b3a0000115dd4e",
-      "id": "1e5c982bdedc4f3657ce7fe1ce6efd8b",
+      "dbId": "666172944cb73d00016a7a55",
+      "id": "183442a65baa474953bb1ca68a808571",
       "name": "FastAPI Httpbin",
-      "orgId": "664f5023d4df31000105fc8d",
+      "orgId": "63fc896217f5f10001783a18",
       "state": {
         "active": true
       }
     },
     "server": {
       "authentication": {
-        "enabled": false,
+        "enabled": true,
         "securitySchemes": {
           "authToken": {
             "enabled": true
           }
         }
       },
-      "detailedActivityLogs": {
-        "enabled": true
-      },
-      "detailedTracing": {
-        "enabled": true
-      },
       "gatewayTags": {
         "enabled": true,
         "tags": [
-          "staging"
+          "production"
         ]
       },
       "listenPath": {

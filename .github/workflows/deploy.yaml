@@ -17,7 +17,7 @@ on:
             env:
                 description: 'Deploy Environment'
                 required: true
-                default: 'staging'
+                default: 'production'
                 type: choice
                 options:
                 - staging
@@ -28,7 +28,8 @@ on:
 jobs:
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
-        environment: ${{ inputs.environment }}
+        if: ${{ inputs.apiName }} == 'oas-httpbin'
+        environment: ${{ inputs.env }}
         permissions:
           contents: write
         steps:
@@ -91,7 +92,7 @@ jobs:
                 else
                     # If the file does not exist, Import API
                     echo "# Import API  ..."
-                    wget --method=POST '$dashboardUrl/api/apis/oas/import?validateRequest=true&templateID=${{ secrets.API_TEMPLATE_ID }}' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
+                    wget --method=POST '${{ steps.dashboard.outputs.dashboardUrl }}/api/apis/oas/import?validateRequest=true&templateID=${{ secrets.API_TEMPLATE_ID }}' --header='Authorization: ${{ secrets.TYK_APIKEY }}' --header='Content-Type: text/plain' --body-data="$body" -O res.json
                     api_id=$(cat res.json | jq -r '.ID')
                 fi
 
