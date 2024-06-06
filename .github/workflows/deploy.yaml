@@ -29,7 +29,11 @@ jobs:
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
+<<<<<<< HEAD
         environment: ${{ inputs.env }}
+=======
+        environment: ${{ inputs.environment }}
+>>>>>>> 44df33a (update deploy.yaml for staging)
         permissions:
           contents: write
         steps:
