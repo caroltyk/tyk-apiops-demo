@@ -10,14 +10,37 @@ on:
               type: choice
               options:
               - oas-httpbin
+              - simple-graphql
             tag:
               description: 'Version Tag'
-              required: true
               type: string
     repository_dispatch:
         types: [trigger]
 
 jobs:
+    deploy-simple-graphql:
+        runs-on: ubuntu-latest
+        if: ${{ inputs.apiName }} == 'simple-graphql'
+        environment: ${{ github.ref_name }}
+        permissions:
+          contents: write
+        steps:
+        -
+            name: Checkout repository
+            uses: actions/checkout@v2
+        -
+            name: Retrieve schema from retistry
+            run: |
+                wget ${{ vars.HIVE_CDN_ENDPOINT }} --header='X-Hive-CDN-Key: ${{ secrets.HIVE_CDN_TOKEN }}' -O res.json
+                cp ./res.json ./${{ inputs.apiName }}/schemas/schema.graphql
+        -
+            name: Commit Schema file
+            run: |
+                git config --global user.name 'github action'
+                git config --global user.email 'github_action@tyk.com'
+                git add ./${{ inputs.apiName }}/schemas/schema.graphql
+                git commit -m "Update GraphQL Schema by release action"
+                git push
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
