@@ -31,7 +31,7 @@ jobs:
         -
             name: Retrieve schema from retistry
             run: |
-                wget https://cdn.graphql-hive.com/artifacts/v1/fa237749-989e-472d-9807-79f164a142f8/sdl --header='X-Hive-CDN-Key: ${{ secrets.HIVE_CDN_TOKEN }}' -O res.json
+                wget ${{ vars.HIVE_CDN_ENDPOINT }} --header='X-Hive-CDN-Key: ${{ secrets.HIVE_CDN_TOKEN }}' -O res.json
                 cp ./res.json ./${{ inputs.apiName }}/schemas/schema.graphql
         -
             name: Commit Schema file
