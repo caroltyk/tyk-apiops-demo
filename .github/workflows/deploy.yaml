@@ -10,17 +10,55 @@ on:
               type: choice
               options:
               - oas-httpbin
+              - simple-graphql
             tag:
               description: 'Version Tag'
               required: true
               type: string
+            env:
+                description: 'Deploy Environment'
+                required: true
+                default: 'jupiter-staging'
+                type: choice
+                options:
+                - jupiter-staging
+                - jupiter-production
     repository_dispatch:
         types: [trigger]
 
 jobs:
-    create-or-update-api:
+    deploy-simple-graphql:
         runs-on: ubuntu-latest
-        environment: ${{ env.GITHUB_REF_NAME }}
+        if: ${{ inputs.apiName }} == 'simple-graphql'
+        environment: ${{ inputs.env }}
+        permissions:
+          contents: write
+        steps:
+        - 
+            name: Checkout repository
+            uses: actions/checkout@v2
+        - 
+            name: Setup Host Environment
+            id: dashboard
+            env:
+                dashboardUrl: ${{ vars.TYK_DASHBOARD_URL }}
+                dashboardHost: ${{ secrets.TYK_DASHBOARD_HOST }}
+            run: |
+                if [ -n "$dashboardHost" ]; then
+                    sudo echo "$dashboardHost" | sudo tee -a /etc/hosts 
+                fi
+                echo "dashboardUrl=$dashboardUrl" >> $GITHUB_OUTPUT
+        -
+            name: Get Schema
+            env:
+                dashboardUrl: ${{ steps.dashboard.outputs.dashboardUrl }}
+            run: |
+                oras pull registry-1.docker.io/${{ secrets.DOCKERHUB_USERNAME }}/${{ inputs.apiName }}:openapi_schema-${{ inputs.tag }}
+                body=$(<openapi_schema.json)
+    deploy-oas-httpbin:
+        runs-on: ubuntu-latest
+        if: ${{ inputs.apiName }} == 'oas-httpbin'
+        environment: ${{ inputs.env }}
         permissions:
           contents: write
         steps:
