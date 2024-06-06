@@ -15,18 +15,33 @@ on:
               description: 'Version Tag'
               required: true
               type: string
-            env:
-                description: 'Deploy Environment'
-                required: true
-                default: 'jupiter-staging'
-                type: choice
-                options:
-                - jupiter-staging
-                - jupiter-production
     repository_dispatch:
         types: [trigger]
 
 jobs:
+    deploy-simple-graphql:
+        runs-on: ubuntu-latest
+        if: ${{ inputs.apiName }} == 'simple-graphql'
+        environment: ${{ github.ref_name }}
+        permissions:
+          contents: write
+        steps:
+        -
+            name: Checkout repository
+            uses: actions/checkout@v2
+        -
+            name: Retrieve schema from retistry
+            run: |
+                wget https://cdn.graphql-hive.com/artifacts/v1/fa237749-989e-472d-9807-79f164a142f8/sdl --header='X-Hive-CDN-Key: ${{ secrets.HIVE_CDN_TOKEN }}' -O res.json
+                cp ./res.json ./${{ inputs.apiName }}/schemas/schema.graphql
+        -
+            name: Commit Schema file
+            run: |
+                git config --global user.name 'github action'
+                git config --global user.email 'github_action@tyk.com'
+                git add ./${{ inputs.apiName }}/schemas/schema.graphql
+                git commit -m "Update GraphQL Schema by release action"
+                git push
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
