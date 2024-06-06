@@ -33,13 +33,13 @@ jobs:
             fi
         - name: Display environment
           run: |
-            echo "Environment is $ENVIRONMENT"
+            echo "Environment is ${{ github.ref_name }}"
             echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
         needs: set-environment
-        environment: ${{ steps.determine-env.outputs.environment }}
+        environment: ${{ github.ref_name }}
         permissions:
           contents: write
         steps:
