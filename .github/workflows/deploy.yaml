@@ -18,27 +18,9 @@ on:
         types: [trigger]
 
 jobs:
-    set-environment:
-        runs-on: ubuntu-latest
-        steps:
-        - name: Determine environment
-          id: determine-env
-          run: |
-            if [[ "${GITHUB_REF##*/}" == "staging" ]]; then
-              echo "ENVIRONMENT=staging" >> $GITHUB_ENV
-            elif [[ "${GITHUB_REF##*/}" == "main" ]]; then
-              echo "ENVIRONMENT=production" >> $GITHUB_ENV
-            else
-              echo "ENVIRONMENT=development" >> $GITHUB_ENV
-            fi
-        - name: Display environment
-          run: |
-            echo "Environment is ${{ github.ref_name }}"
-            echo "environment=$ENVIRONMENT" >> $GITHUB_OUTPUT
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
         if: ${{ inputs.apiName }} == 'oas-httpbin'
-        needs: set-environment
         environment: ${{ github.ref_name }}
         permissions:
           contents: write
