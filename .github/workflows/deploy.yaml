@@ -13,7 +13,6 @@ on:
               - simple-graphql
             tag:
               description: 'Version Tag'
-              required: true
               type: string
     repository_dispatch:
         types: [trigger]
