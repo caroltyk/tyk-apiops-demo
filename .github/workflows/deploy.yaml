@@ -62,12 +62,6 @@ jobs:
                     sudo echo "$dashboardHost" | sudo tee -a /etc/hosts 
                 fi
                 echo "dashboardUrl=$dashboardUrl" >> $GITHUB_OUTPUT
-        - 
-            name: Print Debug
-            run: |
-                echo ${{ vars.TYK_DASHBOARD_URL }}
-                echo ${{ secrets.TYK_DASHBOARD_HOST }}
-                echo '${{ vars.TYK_DASHBOARD_URL }}/api/apis/oas/import?validateRequest=true&templateID=${{ secrets.API_TEMPLATE_ID }}'
         -
             name: Setup ORAS
             uses: oras-project/setup-oras@v1
