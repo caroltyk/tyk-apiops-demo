@@ -20,7 +20,7 @@ on:
 jobs:
     deploy-simple-graphql:
         runs-on: ubuntu-latest
-        if: ${{ inputs.apiName }} == 'simple-graphql'
+        if: inputs.apiName == 'simple-graphql'
         environment: ${{ github.ref_name }}
         permissions:
           contents: write
@@ -43,7 +43,7 @@ jobs:
                 git push
     deploy-oas-httpbin:
         runs-on: ubuntu-latest
-        if: ${{ inputs.apiName }} == 'oas-httpbin'
+        if: inputs.apiName == 'oas-httpbin'
         environment: ${{ github.ref_name }}
         permissions:
           contents: write
